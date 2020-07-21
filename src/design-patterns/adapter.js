@@ -1,7 +1,6 @@
 /**
  * 适配器模式
  */
-
 class Plug {
   getName() {
     return 'iphone充电头';

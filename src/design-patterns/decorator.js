@@ -1,7 +1,6 @@
 /**
  * 装饰器模式
  */
-
 class Cellphone {
   constructor() {}
 

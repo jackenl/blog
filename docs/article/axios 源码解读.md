@@ -4,11 +4,11 @@
 
 ### 1.1 功能与特点
 
-axios是一个基于Promise来管理的http请求库，本质上来说axios是对原生XHR的封装，是其基于Promise的实现版本，相对于Ajax的回调函数有更加好的链式异步操作管理。
+`axios`是一个基于`Promise`来管理的http请求库，本质上来说`axios`是对原生XHR的封装，是其基于`Promise`的实现版本，相对于Ajax的回调函数有更加好的链式异步操作管理。
 
-axios的主要特性包括：
+`axios`的主要特性包括：
 
-* 基于Promise API
+* 基于 Promise API
 * 支持浏览器和node运行环境
 * 提供数据拦截器和数据格式转换
 * 提供请求取消功能
@@ -20,24 +20,26 @@ axios的主要特性包括：
 
 ```
 /lib
-├── adapters											# 请求发送适配器
-│   ├── http.js										# node环境http请求对象
-│   └── xhr.js										# 浏览器环境XML请求对象
-├── axios.js											# 入口，创建构造函数
-├── cancel												# 定义取消功能
-├── core													# 核心代码
-│   ├── Axios.js									# axios实例构造函数
-│   ├── InterceptorManager.js			# 拦截器管理
-│   ├── createError.js						# 抛出错误
-│   ├── dispatchRequest.js				# 请求分发
-│   ├── enhanceError.js						# 错误更新处理
-│   ├── mergeConfig.js						# 合并配置参数
-│   ├── settle.js									# 根据返回状态码返回promise
-│   └── transformData.js					# 数据传参格式转换
-├── defaults.js 									# 默认配置
-├── helpers 											# 辅助类方法
-└── utils.js 											# 工具类方法
+├── adapters                      # 请求发送适配器
+│   ├── http.js                   # node环境http请求对象
+│   └── xhr.js                    # 浏览器环境XML请求对象
+├── axios.js                      # 入口，创建构造函数
+├── cancel                        # 定义取消功能
+├── core                          # 核心代码
+│   ├── Axios.js                  # axios实例构造函数
+│   ├── InterceptorManager.js     # 拦截器管理
+│   ├── createError.js            # 抛出错误
+│   ├── dispatchRequest.js        # 请求分发
+│   ├── enhanceError.js           # 错误更新处理
+│   ├── mergeConfig.js            # 合并配置参数
+│   ├── settle.js                 # 根据返回状态码返回promise
+│   └── transformData.js          # 数据传参格式转换
+├── defaults.js                   # 默认配置
+├── helpers                       # 辅助类方法
+└── utils.js                      # 工具类方法
 ```
+
+
 
 ## 2 源码分析
 
@@ -119,7 +121,76 @@ module.exports = axios;
 module.exports.default = axios;
 ```
 
-### 2.3 Axios 核心构造函数
+### 2.3  辅助工具类函数
+
+#### 2.3.1 bind this绑定函数
+
+```js
+// bind 函数模拟实现
+bind(fn, thisArg) {
+  return function wrap() {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+    return fn.apply(thisArg, args);
+  };
+};
+```
+
+
+
+#### 2.3.2 utils.forEach 迭代器函数
+
+```js
+function forEach(obj, fn) {
+  // Don't bother if no value provided
+  if (obj === null || typeof obj === 'undefined') {
+    return;
+  }
+
+  // Force an array if not already something iterable
+  if (typeof obj !== 'object') {
+    /*eslint no-param-reassign:0*/
+    obj = [obj];
+  }
+
+  if (isArray(obj)) {
+    // Iterate over array values
+    for (var i = 0, l = obj.length; i < l; i++) {
+      fn.call(null, obj[i], i, obj);
+    }
+  } else {
+    // Iterate over object keys
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        fn.call(null, obj[key], key, obj);
+      }
+    }
+  }
+}
+```
+
+
+
+#### 2.3.3 utils.extend 继承函数
+
+```js
+function extend(a, b, thisArg) {
+  forEach(b, function assignValue(val, key) {
+    if (thisArg && typeof val === 'function') {
+      a[key] = bind(val, thisArg);
+    } else {
+      a[key] = val;
+    }
+  });
+  return a;
+}
+```
+
+
+
+### 2.4 Axios 核心构造函数
 
 ```js
 // Axios构造函数
@@ -132,7 +203,7 @@ function Axios(instanceConfig) {
 }
 ```
 
-#### 2.3.1 Axios.prototype.request 请求核心方法
+#### 2.4.1 Axios.prototype.request 请求核心方法
 
 ```js
 Axios.prototype.request = function request(config) {
@@ -183,7 +254,7 @@ Axios.prototype.request = function request(config) {
 };
 ```
 
-#### 2.3.2 请求别名方法实现
+#### 2.4.2 axios[alias] 别名请求方法
 
 ```js
 // 实现通过调用 axios.get 等别名的方式，间接调用 Axios.prototype.request 方法
@@ -211,7 +282,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 
 
-### 2.4 InterceptorManager 拦截器管理构造函数
+### 2.5 InterceptorManager 拦截器管理
 
 ```js
 // lib/core/InterceptorManager.js
@@ -254,7 +325,7 @@ module.exports = InterceptorManager;
 
 
 
-### 2.5 请求分发
+### 2.6 dispatchRequest 请求分发
 
 ```js
 'use strict';
@@ -340,7 +411,7 @@ module.exports = function dispatchRequest(config) {
 
 
 
-### 2.6 取消请求
+### 2.7 CancelToken 取消请求
 
 ```js
 'use strict';
@@ -398,3 +469,12 @@ module.exports = CancelToken;
 
 ```
 
+
+
+## 3 执行流程梳理
+
+![axios执行流程图](../../images/axios执行流程.png)
+
+## 4 个人总结
+
+使用的设计模式包括：工厂模式、迭代器模式、适配器模式、发布订阅模式等

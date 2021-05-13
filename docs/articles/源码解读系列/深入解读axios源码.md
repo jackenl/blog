@@ -1,6 +1,4 @@
-# axios 源码解读
-
-
+# 深入解读axios源码
 
 ## 1 前言
 
@@ -18,32 +16,28 @@
 * 自动转换JSON数据
 * 支持客户端防范XSRF
 
-
-
 ### 1.2 项目目录结构
 
 ```
 /lib
 ├── adapters                      # 请求发送适配器
-│   ├── http.js                   # node环境http请求对象
-│   └── xhr.js                    # 浏览器环境XML请求对象
+│   ├── http.js                   # node环境http请求对象
+│   └── xhr.js                    # 浏览器环境XML请求对象
 ├── axios.js                      # 入口，创建构造函数
 ├── cancel                        # 定义取消功能
 ├── core                          # 核心代码
-│   ├── Axios.js                  # axios实例构造函数
-│   ├── InterceptorManager.js     # 拦截器管理
-│   ├── createError.js            # 抛出错误
-│   ├── dispatchRequest.js        # 请求分发
-│   ├── enhanceError.js           # 错误更新处理
-│   ├── mergeConfig.js            # 合并配置参数
-│   ├── settle.js                 # 根据返回状态码返回promise
-│   └── transformData.js          # 数据传参格式转换
+│   ├── Axios.js                  # axios实例构造函数
+│   ├── InterceptorManager.js     # 拦截器管理
+│   ├── createError.js            # 抛出错误
+│   ├── dispatchRequest.js        # 请求分发
+│   ├── enhanceError.js           # 错误更新处理
+│   ├── mergeConfig.js            # 合并配置参数
+│   ├── settle.js                 # 根据返回状态码返回promise
+│   └── transformData.js          # 数据传参格式转换
 ├── defaults.js                   # 默认配置
 ├── helpers                       # 辅助类方法
 └── utils.js                      # 工具类方法
 ```
-
-
 
 ## 2 源码分析
 
@@ -70,8 +64,6 @@ module.exports = require('./lib/axios');
 ```
 
 通过入口文件，可以知道`axios`函数的定义位置为，接下来我们将从`axios`函数定义入手，开始逐步分析`axios`源码。
-
-
 
 ### 2.2 axios 函数定义
 
@@ -134,8 +126,6 @@ module.exports = axios;
 module.exports.default = axios;
 ```
 
-
-
 ### 2.3  辅助工具类函数
 
 #### 2.3.1 bind this绑定函数
@@ -153,11 +143,10 @@ bind(fn, thisArg) {
 };
 ```
 
-
-
 #### 2.3.2 utils.forEach 迭代器函数
 
 ```js
+// 通过迭代器遍历 obj 属性并执行回调函数
 function forEach(obj, fn) {
   // Don't bother if no value provided
   if (obj === null || typeof obj === 'undefined') {
@@ -186,11 +175,10 @@ function forEach(obj, fn) {
 }
 ```
 
-
-
 #### 2.3.3 utils.extend 继承函数
 
 ```js
+// 模拟类继承方法
 function extend(a, b, thisArg) {
   forEach(b, function assignValue(val, key) {
     if (thisArg && typeof val === 'function') {
@@ -203,8 +191,6 @@ function extend(a, b, thisArg) {
   return a;
 }
 ```
-
-
 
 ### 2.4 Axios 核心构造函数
 
@@ -227,8 +213,6 @@ function Axios(instanceConfig) {
   };
 }
 ```
-
-
 
 #### 2.4.1 Axios.prototype.request 请求核心方法
 
@@ -281,8 +265,6 @@ Axios.prototype.request = function request(config) {
 };
 ```
 
-
-
 #### 2.4.2 axios[alias] 别名请求方法
 
 ```js
@@ -308,8 +290,6 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
   };
 });
 ```
-
-
 
 ### 2.5 InterceptorManager 拦截器管理
 
@@ -351,8 +331,6 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 ```
-
-
 
 ### 2.6 dispatchRequest 请求分发
 
@@ -438,9 +416,29 @@ module.exports = function dispatchRequest(config) {
 
 ```
 
-
-
 ### 2.7 CancelToken 取消请求
+
+首先我们查看使用`cancel token`取消请求的例子
+
+```js
+const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
+
+axios.get('/user/12345', {
+  cancelToken: source.token
+}).catch(function(thrown) {
+  if (axios.isCancel(thrown)) {
+    console.log('Request canceled', thrown.message);
+  } else {
+     // 处理错误
+  }
+});
+
+// 执行 cancel 触发取消请求
+source.cancel('Operation canceled by the user.');
+```
+
+通过查看取消请求例子，我们可以发现，`axios`取消请求处理并没有耦合在`axios`实例对象内来进行处理，而是通过定义一个`CancelToken`构造函数来集中处理取消请求，接下来我们来逐步分析`CancelToken`构造函数的实现，学习其是如何通过`CancelToken`触发取消请求，并向外抛出取消错误信息。
 
 ```js
 'use strict';
@@ -498,14 +496,16 @@ module.exports = CancelToken;
 
 ```
 
-
+因此，不难发现`CancelToken`构造函数就是一个发布订阅函数，通过发布订阅触发向外抛出错误，`Promise`链式结构`catch`到错误后，停止继续执行并执行错误回调。
 
 ## 3 执行流程梳理
 
-![axios执行流程图](../../../images/axios执行流程.png)
-
+根据以上源码的分析解读，以下是本人总结出来的，`axios`的整个执行流程如下：
+![](../../../images/axios执行流程.png)
 
 
 ## 4 个人总结
 
-使用的设计模式包括：工厂模式、迭代器模式、适配器模式、发布订阅模式等
+`axios`作为一个优秀的`http`请求库，其兼容了浏览器和`nodejs`环境下的`http`接口请求，能够满足日常的各种`http`接口请求的项目开发，同时，该请求库也提供了高度可定制化的配置和默认配置，方便开发者根据不同的需求进行自定义配置，这也是其能够成为最受欢迎的`http`请求库的原因。通过分析解读`axios`源码，我们可以从其中学习到许多需要优秀的编程思想和设计模式，其项目结构很好的诠释了单一职责原则：每个函数只负责处理一项界定的功能，这样的编程方式能够让后开发者仅仅是针对某一项功能进行修改而不会影响到项目的整体流程，极大的减少项目的额后期功能迭代和维护成本；该项目使用的设计模式包括：工厂模式、迭代器模式、适配器模式、发布订阅模式等，通过这些设计模式引入，通过引入这些设计模式，能够帮助开发者很好的组织项目代码。
+
+以上便是我本人在学习解读`axios`源码过程中的理解和认识的个人笔记。

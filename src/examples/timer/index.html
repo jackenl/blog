@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>计时器</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+  <script src="./setTimeoutTimer.js"></script>
+  <script src="./webWorkerTimer.js"></script>
+  <script src="./requestAnimationFrameTimer.js"></script>
+  <script src="./offsetTimer.js"></script>
+  <style>
+    .timer-card {
+      width: 300px;
+      padding: 20px;
+      margin: 30px auto;
+      border-radius: 10px;
+      border: 1px solid #666;
+    }
+    .timer-card-content > * {
+      margin-top: 10px;
+    }
+    .content-line {
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="timer-card">
+      <div class="timer-card-title">setTimeout计时器</div>
+      <div class="timer-card-content">
+        <div class="content-line">
+          <span>理想时间：</span>
+          <input v-model="countUp1.ideal" type="text">
+        </div>
+        <div class="content-line">
+          <span>实际时间：</span>
+          <input v-model="countUp1.real" type="text">
+        </div>
+        <div class="content-line">
+          <span>误差：</span>
+          <input v-model="countUp1.diff" type="text">
+        </div>
+        <div class="content-footer">
+          <button @click="start1">开始</button>
+          <button @click="stop1">停止</button>
+          <button @click="clear1">重置</button>
+        </div>
+      </div>
+    </div>
+    <div class="timer-card">
+      <div class="timer-card-title">Web Worker计时器</div>
+      <div class="timer-card-content">
+        <div class="content-line">
+          <span>理想时间：</span>
+          <input v-model="countUp2.ideal" type="text">
+        </div>
+        <div class="content-line">
+          <span>实际时间：</span>
+          <input v-model="countUp2.real" type="text">
+        </div>
+        <div class="content-line">
+          <span>误差：</span>
+          <input v-model="countUp2.diff" type="text">
+        </div>
+        <div class="content-footer">
+          <button @click="start2">开始</button>
+          <button @click="stop2">停止</button>
+          <button @click="clear2">重置</button>
+        </div>
+      </div>
+    </div>
+    <div class="timer-card">
+      <div class="timer-card-title">requestAnimationFrame计时器</div>
+      <div class="timer-card-content">
+        <div class="content-line">
+          <span>理想时间：</span>
+          <input v-model="countUp3.ideal" type="text">
+        </div>
+        <div class="content-line">
+          <span>实际时间：</span>
+          <input v-model="countUp3.real" type="text">
+        </div>
+        <div class="content-line">
+          <span>误差：</span>
+          <input v-model="countUp3.diff" type="text">
+        </div>
+        <div class="content-footer">
+          <button @click="start3">开始</button>
+          <button @click="stop3">停止</button>
+          <button @click="clear3">重置</button>
+        </div>
+      </div>
+    </div>
+    <div class="timer-card">
+      <div class="timer-card-title">时间补偿计时器</div>
+      <div class="timer-card-content">
+        <div class="content-line">
+          <span>理想时间：</span>
+          <input v-model="countUp4.ideal" type="text">
+        </div>
+        <div class="content-line">
+          <span>实际时间：</span>
+          <input v-model="countUp4.real" type="text">
+        </div>
+        <div class="content-line">
+          <span>误差：</span>
+          <input v-model="countUp4.diff" type="text">
+        </div>
+        <div class="content-footer">
+          <button @click="start4">开始</button>
+          <button @click="stop4">停止</button>
+          <button @click="clear4">重置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        countUp1: {
+          ideal: 0,
+          real: 0,
+          diff: 0,
+        },
+        countUp2: {
+          ideal: 0,
+          real: 0,
+          diff: 0
+        },
+        countUp3: {
+          ideal: 0,
+          real: 0,
+          diff: 0
+        },
+        countUp4: {
+          ideal: 0,
+          real: 0,
+          diff: 0
+        },
+        realCount: 0,
+        start: 0,
+        loop: true
+      },
+      methods: {
+        realStart() {
+          this.realCount = 0;
+        },
+        start1() {
+          if (!this.countUp1.timeout) {
+            setTimeoutTimer(this.countUp1);
+          }
+        },
+        stop1() {
+          clearTimeout(this.countUp1.timeout);
+          this.countUp1.timeout = null;
+        },
+        clear1() {
+          this.stop1();
+          this.countUp1.ideal = 0;
+          this.countUp1.real = 0;
+          this.countUp1.diff = 0;
+        },
+        start2() {
+          webWorkerTimer(this.countUp2);
+        },
+        stop2() {
+          countUp2.worker.terminate();
+        },
+        clear2() {
+        },
+        start3() {
+          if (!isClear) {
+            requestAnimationFrameTimer(this.countUp3);
+          }
+        },
+        stop3() {
+          clearTimeout2();
+        },
+        clear3() {
+          this.stop3();
+          this.countUp3.ideal = 0;
+          this.countUp3.real = 0;
+          this.countUp3.diff = 0;
+        },
+        start4() {
+          if (!this.countUp4.timeout) {
+            offsetTimer(this.countUp4);
+          }
+        },
+        stop4() {
+          clearTimeout(this.countUp4.timeout);
+          this.countUp4.timeout = null;
+        },
+        clear4() {
+          this.stop4();
+          this.countUp4.ideal = 0;
+          this.countUp4.real = 0;
+          this.countUp4.diff = 0;
+        }
+      }
+    }) 
+  </script>
+</body>
+</html>

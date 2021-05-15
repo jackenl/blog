@@ -11,6 +11,9 @@
   <script src="./requestAnimationFrameTimer.js"></script>
   <script src="./offsetTimer.js"></script>
   <style>
+    .header {
+      text-align: center;
+    }
     .timer-card {
       width: 300px;
       padding: 20px;
@@ -29,6 +32,11 @@
 </head>
 <body>
   <div id="app">
+    <div class="header">
+      <button @click="start">一键开始</button>
+      <button @click="stop">一键停止</button>
+      <button @click="clear">一键重置</button>
+    </div>
     <div class="timer-card">
       <div class="timer-card-title">setTimeout计时器</div>
       <div class="timer-card-content">
@@ -195,6 +203,24 @@
         clear4() {
           this.stop4();
           this.count4 = Object.assign(this.defaultCount);
+        },
+        start() {
+          this.start1();
+          this.start2();
+          this.start3();
+          this.start4();
+        },
+        stop() {
+          this.stop1();
+          this.stop2();
+          this.stop3();
+          this.stop4();
+        },
+        clear() {
+          this.clear1();
+          this.clear2();
+          this.clear3();
+          this.clear4();
         }
       },
       created() {

@@ -29,7 +29,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           publish_dir: ./src/examples
-          github_token: ${{ secrets.DEPLOY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           user_name: ${{ secrets.MY_USER_NAME }}
           user_email: ${{ secrets.MY_USER_EMAIL }}
           commit_message: Update Examples

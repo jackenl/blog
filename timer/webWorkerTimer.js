@@ -20,6 +20,7 @@ function createWorker (fn, options) {
 function webWorkerTimer(callback) {
   let isStart = false;
   const speed = 50;
+  const start = +new Date();
   const count = {
     ideal: 0,
     real: 0,
@@ -28,11 +29,11 @@ function webWorkerTimer(callback) {
   
   const worker = createWorker(() => {
     onmessage = function (e) {
-      const start = +new Date();
+      const date = +new Date();
       while (true) {
         const now = +new Date();
-        if (now - start >= e.data) {
-          postMessage(now - start);
+        if (now - date >= e.data) {
+          postMessage(1);
           return;
         }
       }
@@ -41,7 +42,8 @@ function webWorkerTimer(callback) {
   count.worker = worker;
   
   worker.onmessage = (e) => {
-    count.ideal += e.data;
+    const now = +new Date();
+    count.ideal = now - start;
     count.real += speed;
     count.diff = count.ideal - count.real;
     callback(count);

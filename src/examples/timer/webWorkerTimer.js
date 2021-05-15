@@ -43,7 +43,7 @@ function webWorkerTimer(callback) {
   worker.onmessage = (e) => {
     count.ideal += e.data;
     count.real += speed;
-    count.dif = count.ideal - count.real;
+    count.diff = count.ideal - count.real;
     callback(count);
 
     if (isStart) {

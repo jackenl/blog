@@ -7,6 +7,3 @@
 3. 基于 Web Worker 循环计时器
 4. requestAnimationFrame 模拟计时器
 5. 基于 setTimeout 时间补偿计时器
-
-## setTimeout 计时器
-

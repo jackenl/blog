@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>计时器</title>
+  <title>准时计时器实现</title>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
   <script src="./setTimeoutTimer.js"></script>
   <script src="./webWorkerTimer.js"></script>
@@ -34,15 +34,15 @@
       <div class="timer-card-content">
         <div class="content-line">
           <span>理想时间：</span>
-          <input v-model="countUp1.ideal" type="text">
+          <input v-model="count1.ideal" type="text">
         </div>
         <div class="content-line">
           <span>实际时间：</span>
-          <input v-model="countUp1.real" type="text">
+          <input v-model="count1.real" type="text">
         </div>
         <div class="content-line">
           <span>误差：</span>
-          <input v-model="countUp1.diff" type="text">
+          <input v-model="count1.diff" type="text">
         </div>
         <div class="content-footer">
           <button @click="start1">开始</button>
@@ -56,15 +56,15 @@
       <div class="timer-card-content">
         <div class="content-line">
           <span>理想时间：</span>
-          <input v-model="countUp2.ideal" type="text">
+          <input v-model="count2.ideal" type="text">
         </div>
         <div class="content-line">
           <span>实际时间：</span>
-          <input v-model="countUp2.real" type="text">
+          <input v-model="count2.real" type="text">
         </div>
         <div class="content-line">
           <span>误差：</span>
-          <input v-model="countUp2.diff" type="text">
+          <input v-model="count2.diff" type="text">
         </div>
         <div class="content-footer">
           <button @click="start2">开始</button>
@@ -78,15 +78,15 @@
       <div class="timer-card-content">
         <div class="content-line">
           <span>理想时间：</span>
-          <input v-model="countUp3.ideal" type="text">
+          <input v-model="count3.ideal" type="text">
         </div>
         <div class="content-line">
           <span>实际时间：</span>
-          <input v-model="countUp3.real" type="text">
+          <input v-model="count3.real" type="text">
         </div>
         <div class="content-line">
           <span>误差：</span>
-          <input v-model="countUp3.diff" type="text">
+          <input v-model="count3.diff" type="text">
         </div>
         <div class="content-footer">
           <button @click="start3">开始</button>
@@ -96,19 +96,19 @@
       </div>
     </div>
     <div class="timer-card">
-      <div class="timer-card-title">时间补偿计时器</div>
+      <div class="timer-card-title">setTimeout时间补偿计时器</div>
       <div class="timer-card-content">
         <div class="content-line">
           <span>理想时间：</span>
-          <input v-model="countUp4.ideal" type="text">
+          <input v-model="count4.ideal" type="text">
         </div>
         <div class="content-line">
           <span>实际时间：</span>
-          <input v-model="countUp4.real" type="text">
+          <input v-model="count4.real" type="text">
         </div>
         <div class="content-line">
           <span>误差：</span>
-          <input v-model="countUp4.diff" type="text">
+          <input v-model="count4.diff" type="text">
         </div>
         <div class="content-footer">
           <button @click="start4">开始</button>
@@ -122,88 +122,85 @@
     new Vue({
       el: '#app',
       data: {
-        countUp1: {
-          ideal: 0,
-          real: 0,
-          diff: 0,
-        },
-        countUp2: {
+        defaultCount: {
           ideal: 0,
           real: 0,
           diff: 0
         },
-        countUp3: {
-          ideal: 0,
-          real: 0,
-          diff: 0
-        },
-        countUp4: {
-          ideal: 0,
-          real: 0,
-          diff: 0
-        },
-        realCount: 0,
-        start: 0,
-        loop: true
+        count1: {},
+        count2: {},
+        count3: {},
+        count4: {},
+        worker: null
       },
       methods: {
-        realStart() {
-          this.realCount = 0;
+        initialize() {
+          this.count1 = Object.assign(this.defaultCount);
+          this.count2 = Object.assign(this.defaultCount);
+          this.count3 = Object.assign(this.defaultCount);
+          this.count4 = Object.assign(this.defaultCount);
         },
         start1() {
-          if (!this.countUp1.timeout) {
-            setTimeoutTimer(this.countUp1);
+          if (!this.count1.timer) {
+            setTimeoutTimer((data) => {
+              this.count1 = data;
+            });
           }
         },
         stop1() {
-          clearTimeout(this.countUp1.timeout);
-          this.countUp1.timeout = null;
+          clearTimeout(this.count1.timer);
         },
         clear1() {
           this.stop1();
-          this.countUp1.ideal = 0;
-          this.countUp1.real = 0;
-          this.countUp1.diff = 0;
+          this.count1 = Object.assign(this.defaultCount);
         },
         start2() {
-          webWorkerTimer(this.countUp2);
+          if (!this.count2.worker) {
+            webWorkerTimer((data) => {
+              this.count2 = data;
+            });
+          }
         },
         stop2() {
-          countUp2.worker.terminate();
+          this.count2.worker.terminate();
         },
         clear2() {
+          this.stop2();
+          this.count2 = Object.assign(this.defaultCount);
         },
         start3() {
-          if (!isClear) {
-            requestAnimationFrameTimer(this.countUp3);
+          if (!this.count3.timer) {
+            requestAnimationFrameTimer((data) => {
+              this.count3 = data;
+            });
           }
         },
         stop3() {
-          clearTimeout2();
+          clearTimeout2(this.count3.timer);
         },
         clear3() {
           this.stop3();
-          this.countUp3.ideal = 0;
-          this.countUp3.real = 0;
-          this.countUp3.diff = 0;
+          this.count3 = Object.assign(this.defaultCount);
         },
         start4() {
-          if (!this.countUp4.timeout) {
-            offsetTimer(this.countUp4);
+          if (!this.count4.timer) {
+            offsetTimer((data) => {
+              this.count4 = data;
+            });
           }
         },
         stop4() {
-          clearTimeout(this.countUp4.timeout);
-          this.countUp4.timeout = null;
+          clearTimeout(this.count4.timer);
         },
         clear4() {
           this.stop4();
-          this.countUp4.ideal = 0;
-          this.countUp4.real = 0;
-          this.countUp4.diff = 0;
+          this.count4 = Object.assign(this.defaultCount);
         }
-      }
-    }) 
+      },
+      created() {
+        this.initialize();
+      },
+    });
   </script>
 </body>
 </html>

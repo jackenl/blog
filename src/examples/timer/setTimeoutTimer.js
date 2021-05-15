@@ -1,28 +1,31 @@
 /**
- * setTimeout计时器
- * @param {*} countUp 计时对象
+ * setTimeout 计时器
+ * @param {function}} callback 
  */
-function setTimeoutTimer(countUp) {
-  let speed = 50, counter = 1;
-  start = new Date().getTime();
+function setTimeoutTimer(callback) {
+  const speed = 50
+  let counter = 1;
+  const start = new Date().getTime();
+  const count = {};
 
   function instance() {
     let ideal = counter * speed;
     let real = (new Date().getTime() - start);
 
     counter++;
-    countUp.ideal = ideal;
-    countUp.real = real;
+    count.ideal = ideal;
+    count.real = real;
 
     let diff = real - ideal;
-    countUp.diff = diff;
+    count.diff = diff;
+    callback(count);
 
-    countUp.timeout = setTimeout(() => {
+    count.timer = setTimeout(() => {
       instance();
     }, speed);
   }
 
-  countUp.timeout = setTimeout(() => {
+  count.timer = setTimeout(() => {
     instance();
   }, speed);
 }

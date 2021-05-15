@@ -1,3 +1,9 @@
+/**
+ * Web Worker 构建器
+ * @param {function} fn 
+ * @param {object} options 
+ * @returns 
+ */
 function createWorker (fn, options) {
   const blob = new Blob(['(' + fn.toString() + ')()']);
   const url = URL.createObjectURL(blob);
@@ -7,42 +13,44 @@ function createWorker (fn, options) {
   return new Worker(url);
 }
 
-function webWorkerTimer(countUp) {
+/**
+ * Web Worker 计时器
+ * @param {function} callback 
+ */
+function webWorkerTimer(callback) {
   let isStart = false;
   const speed = 50;
+  const count = {
+    ideal: 0,
+    real: 0,
+    diff: 0
+  };
   
   const worker = createWorker(() => {
     onmessage = function (e) {
-      isStart = true;
       const start = +new Date();
       while (true) {
         const now = +new Date();
-        console.log(now);
         if (now - start >= e.data) {
-          countUp.real = now - start;
-          postMessage(1);
+          postMessage(now - start);
           return;
         }
       }
     }
   });
+  count.worker = worker;
   
   worker.onmessage = (e) => {
-    cb();
+    count.ideal += e.data;
+    count.real += speed;
+    count.dif = count.ideal - count.real;
+    callback(count);
+
     if (isStart) {
       worker.postMessage(speed);
     }
   }
-  worker.postMessage(speed);
-  countUp.worker = worker;
-}
 
-function loopTimer(start, time) {
-  start = start || +new Date();
-  while (loop) {
-    const now = +new Date();
-    if (now - start >= time) {
-      return now - start;
-    }
-  }
+  isStart = true;
+  worker.postMessage(speed);
 }

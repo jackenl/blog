@@ -1,7 +1,15 @@
-let isClear = false;
+const timer = {}; // 计时器索引存储对象
+let index = 0;
 
+/**
+ * setTimeout 模拟实现
+ * @param {function} cb 
+ * @param {number} delay 
+ * @returns 
+ */
 function setTimeout2(cb, delay) {
   const start = +new Date();
+  let timerIndex = index++;
   step();
 
   function step() {
@@ -10,40 +18,51 @@ function setTimeout2(cb, delay) {
       cb();
       return;
     }
-    if (!isClear) {
+    if (!timer[timerIndex]) {
       requestAnimationFrame(step);
     }
   }
+  return timerIndex;
 }
 
-function clearTimeout2() {
-  isClear = true;
-  setTimeout(() => {
-    isClear = false;
-  }, 100);
+/**
+ * 模拟计时器清除
+ * @param {number} timerIndex 
+ */
+function clearTimeout2(timerIndex) {
+  if (!timer[timerIndex]) {
+    timer[timerIndex] = true;
+  }
 }
 
-function requestAnimationFrameTimer(countUp) {
-  let speed = 50, counter = 1;
-  start = new Date().getTime();
+/**
+ * requestAnimationFrame 计时器
+ * @param {*} callback 
+ */
+function requestAnimationFrameTimer(callback) {
+  const speed = 50
+  let counter = 1;
+  const start = new Date().getTime();
+  const count = {};
 
   function instance() {
     let ideal = counter * speed;
     let real = (new Date().getTime() - start);
 
     counter++;
-    countUp.ideal = ideal;
-    countUp.real = real;
+    count.ideal = ideal;
+    count.real = real;
 
     let diff = real - ideal;
-    countUp.diff = diff;
+    count.diff = diff;
+    callback(count);
 
-    countUp.timeout = setTimeout2(() => {
+    count.timer = setTimeout2(() => {
       instance();
     }, speed);
   }
 
-  countUp.timeout = setTimeout2(() => {
+  count.timer = setTimeout2(() => {
     instance();
   }, speed);
 }

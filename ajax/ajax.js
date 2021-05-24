@@ -46,21 +46,15 @@ function ajax(options) {
   const data = formatParams(options.params);
 
   // 超时处理
-  let isDone = false;
-  setTimeout(() => {
-    if (!isDone) {
-      isDone = true;
-      options.error(500, 'Request timed out');
-    }
-  }, options.timeout);
+  xhr.timeout = options.timeout;
   
   // 监听异步请求
   xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4 && !isDone) {
-      isDone = true;
+    if (xhr.readyState === 4) {
       options.complete();
 
       const status = xhr.status || 500;
+      const statusText = xhr.status || 'not found';
       if (status >= 200 && status <= 300) {
         let response;
         const contentType = xhr.getResponseHeader('Content-type');
@@ -73,7 +67,7 @@ function ajax(options) {
         }
         options.success(response);
       } else {
-        options.error(xhr.status, xhr.statusText);
+        options.error(status, statusText);
       }
     }
   }

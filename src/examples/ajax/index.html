@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基于XMLHttpRequest实现ajax</title>
+  <script src="ajax.js"></script>
+</head>
+<body>
+  <div class="container">
+    <button id="btn1">发起get请求</button>
+    <button id="btn2">发起post请求</button>
+  </div>
+  <script>
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
+    btn1.onclick = function() {
+      ajax({
+        type: 'get',
+        url: 'http://localhost:3000/api',
+        success: function(data) {
+          console.log('success', data);
+        },
+        error: function(status, statusText) {
+          console.log('error', status, statusText);
+        }
+      });
+    }
+    btn2.onclick = function() {
+      ajax({
+        type: 'post',
+        url: 'http://localhost:3000/api/user',
+        data: {
+          username: 'jacken'
+        },
+        success: function(data) {
+          console.log('success', data);
+        },
+        error: function(status, statusText) {
+          console.log('error', status, statusText);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

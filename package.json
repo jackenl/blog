@@ -5,13 +5,19 @@
   "main": "index.js",
   "scripts": {
     "dev:ajax": "nodemon src/examples/ajax/server.js",
+    "build:mypack": "node src/examples/mypack/mypack.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "@babel/core": "^7.14.3",
+    "@babel/parser": "^7.14.3",
+    "@babel/traverse": "^7.14.2",
+    "nodemon": "^2.0.7",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

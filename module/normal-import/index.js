@@ -1,2 +1,2 @@
-import print from './print';
+import print1 from './a';
 print();

@@ -1,1 +1,1 @@
-import('./print').then(print => print());
+import('./a').then(print => print());

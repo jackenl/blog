@@ -1,2 +1,2 @@
-const print1 = require('./a')
-print1();
+const print = require('./a')
+print();

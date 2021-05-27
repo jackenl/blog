@@ -1,26 +1,19 @@
 (() => {
   // webpackBootstrap
   var __webpack_modules__ = {
-    './src/examples/module/require/a.js':
-      (module, __unused_webpack_exports, __webpack_require__) => {
-        const print2 = __webpack_require__(/*! ./b */ './src/examples/module/require/b.js');
-        print2();
+    './src/examples/module/require/a.js': (module, __unused_webpack_exports, __webpack_require__) => {
+      const value = __webpack_require__(/*! ./b */ './src/examples/module/require/b.js');
 
-        function print1() {
-          console.log('Hello world!');
-        }
-
-        module.exports = print1;
-      },
-
-    './src/examples/module/require/b.js':
-      (module) => {
-        function print2() {
-          console.log('hahaha!');
-        }
-
-        module.exports = print2;
+      function print() {
+        console.log(value);
       }
+
+      module.exports = print;
+    },
+
+    './src/examples/module/require/b.js': (module) => {
+      module.exports = 'Hello world!';
+    }
   };
   /************************************************************************/
   // The module cache
@@ -51,7 +44,7 @@
   var __webpack_exports__ = {};
   // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
   (() => {
-    const print1 = __webpack_require__(/*! ./a */ './src/examples/module/require/a.js');
-    print1();
+    const print = __webpack_require__(/*! ./a */ './src/examples/module/require/a.js');
+    print();
   })();
 })();

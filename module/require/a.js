@@ -1,8 +1,7 @@
-const print2 = require('./b');
-print2();
+const value = require('./b');
 
-function print1() {
-  console.log('Hello world!');
+function print() {
+  console.log(value);
 }
 
-module.exports = print1;
+module.exports = print;

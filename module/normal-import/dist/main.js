@@ -5,25 +5,21 @@
     './src/examples/module/normal-import/a.js': (__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
       __webpack_require__.r(__webpack_exports__);
       __webpack_require__.d(__webpack_exports__, {
-        default: () => /* binding */ print1
+        default: () => /* binding */ print
       });
       var _b__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./b */ './src/examples/module/normal-import/b.js');
 
-      (0, _b__WEBPACK_IMPORTED_MODULE_0__.default)();
-
-      function print1() {
-        console.log('hello world');
+      function print() {
+        console.log(_b__WEBPACK_IMPORTED_MODULE_0__.default);
       }
     },
 
     './src/examples/module/normal-import/b.js': (__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
       __webpack_require__.r(__webpack_exports__);
       __webpack_require__.d(__webpack_exports__, {
-        default: () => /* binding */ print2
+        default: () => __WEBPACK_DEFAULT_EXPORT__,
       });
-      function print2() {
-        console.log('hahaha!');
-      }
+      const __WEBPACK_DEFAULT_EXPORT__ = 'Hello World!';
     }
   };
   /************************************************************************/

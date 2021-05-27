@@ -1,6 +1,5 @@
-import print2 from './b'
-print2();
+import value from './b'
 
-export default function print1() {
-  console.log('hello world');
+export default function print() {
+  console.log(value);
 }

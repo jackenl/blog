@@ -6,6 +6,9 @@
   "scripts": {
     "dev:ajax": "nodemon src/examples/ajax/server.js",
     "build:mypack": "node src/examples/mypack/mypack.js",
+    "build:require": "webpack --config src/examples/module/require/webpack.config.js",
+    "build:import": "webpack --config src/examples/module/normal-import/webpack.config.js",
+    "build:async": "webpack --config src/examples/module/async-import/webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -24,7 +24,7 @@ function readModuleInfo(filePath) {
   traverse(ast, {
     CallExpression: ({ node }) => {
       if (node.callee.name === 'require') {
-        node.callee.name = '_require_';
+        node.callee.name = '__require__';
         let moduleName = node.arguments[0].value;
         moduleName += path.extname(moduleName) ? '' : '.js';
         moduleName = path.join(path.dirname(filePath), moduleName);
@@ -60,29 +60,28 @@ function buildDependencyGraph(entry) {
 function pack(graph, entry) {
   const moduleArr = graph.map((module) => {
     return (
-      `"${module.filePath}": function(module, _exports_, _require_) {
-        eval(
-          \`${module.code}\`
-        )}`
+      `"${module.filePath}": ((module, __exports__, __require__) => {
+        ${module.code}
+      })`
     );
   });
   const output = `(() => {
     var modules = {
       ${moduleArr.join(',\n')}
     }
-    var modules_cache = {}
-    var _require_ = function(moduleId) {
-      if (modules_cache[moduleId]) return modules_cache[moduleId].exports
+    var __module_cache__ = {}
+    var __require__ = function(moduleId) {
+      if (__module_cache__[moduleId]) return __module_cache__[moduleId].exports
 
-      var module = modules_cache[moduleId] = {
+      var module = __module_cache__[moduleId] = {
         exports: {}
       }
 
-      modules[moduleId](module, module.exports, _require_)
+      modules[moduleId](module, module.exports, __require__)
       return module.exports
     }
 
-    var _exports_ = _require_('${entry}')
+    var __exports__ = __require__('${entry}')
   })()`;
   
   return output;

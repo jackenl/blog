@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev:ajax": "nodemon src/examples/ajax/server.js",
-    "build:mypack": "node src/examples/mypack/mypack.js"
+    "build:mypack": "node src/node/mypack/mypack.js"
   },
   "keywords": [],
   "author": "",

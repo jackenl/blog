@@ -1,10 +1,21 @@
-Function.prototype.call = function (context) {
-  let context = context || window;
-
+Function.prototype.call = function (context, ...args) {
+  if (typeof this !== 'function') {
+    throw new TypeError('this is not a function');
+  }
+  context = context || window;
   context.fn = this;
-  let args = [...arguments].slice(1);
 
-  let result = context.fn(...args);
+  const res = context.fn(...args);
   delete context.fn;
-  return result;
+  return res;
+};
+
+// test
+const obj = {
+  value: 0
+};
+function sum(...args) {
+  this.value = args.reduce((pre, cur) => pre + cur);
 }
+sum.call(obj, 1, 2, 3);
+console.log(obj.value);

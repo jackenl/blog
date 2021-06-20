@@ -1,15 +1,24 @@
-Function.prototype.bind = function (context) {
+Function.prototype.bind = function (context, ...args) {
   if (typeof this !== 'function') {
-    throw new TypeError('Error');
+    throw new TypeError('this is not a function');
   }
 
-  var _this = this;
-  var args = [...arguments].slice(1);
+  const self = this;
 
   return function F() {
     if (this instanceof F) {
-      return new _this(...args, ...arguments);
+      return new self(...args, ...arguments);
     }
-    return _this.apply(context, args.concat(...arguments));
-  }
+    return self.apply(context, [...args, ...arguments]);
+  };
+};
+
+// rest
+const obj = {
+  value: 0
+};
+function sum(...args) {
+  this.value = args.reduce((pre, cur) => pre + cur);
 }
+sum.bind(obj, 1, 2, 3)(4);
+console.log(obj.value);

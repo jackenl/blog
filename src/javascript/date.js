@@ -24,5 +24,6 @@ Date.prototype.Format = function (fmt) {
   return fmt;
 };
 
+// test
 let date = new Date();
 console.log(date.Format('YYYY-MM-DD HH:mm:ss'));

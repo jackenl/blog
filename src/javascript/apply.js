@@ -1,14 +1,26 @@
-Function.prototype.apply = function (context) {
-  let context = context || window;
+Function.prototype.apply = function (context, args) {
+  if (typeof this !== 'function') {
+    throw new TypeError('this is not a function');
+  }
+  context = context || window;
   context.fn = this;
 
-  let result;
-  if (arguments[1]) {
-    result = context.fn(...arguments[1]);
+  let res;
+  if (args) {
+    res = context.fn(args);
   } else {
-    result = context.fn();
+    res = context.fn();
   }
-
   delete context.fn;
-  return result;
+  return res;
+};
+
+// test
+const obj = {
+  value: 0
+};
+function sum(arr) {
+  this.value = arr.reduce((pre, cur) => pre + cur);
 }
+sum.apply(obj, [1, 2, 3]);
+console.log(obj.value);

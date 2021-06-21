@@ -39,7 +39,7 @@ function ajax(options) {
     xhr = new XMLHttpRequest();
   } else {
     // IE6及其以下版本 
-    xhr = new ActiveXObject('Microsoft.XMLHTTP');
+    xhr = new ActiveXObject('Microsoft.XMLHttp');
   }
 
   // 格式化 params

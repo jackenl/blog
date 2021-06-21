@@ -1,10 +1,10 @@
-Function.prototype.bind = function (context, ...args) {
+Function.prototype.bind = function (context) {
   if (typeof this !== 'function') {
     throw new TypeError('this is not a function');
   }
-
   const self = this;
 
+  const args = [...arguments].slice(1);
   return function F() {
     if (this instanceof F) {
       return new self(...args, ...arguments);

@@ -1,21 +1,21 @@
 function jsonp({ url, params, callbackName }) {
-  const normalizeUrl = () => {
-    const arr = [];
+  const generateUrl = () => {
+    let dataSrc = '';
     for (let key in params) {
-      if (Object.prototype.hasOwnProperty.call(params, key)) {
-        arr.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
+      if (params.hasOwnProperty(key)) {
+        dataSrc += `${key}=${params[key]}&`;
       }
     }
-    const dataSrc = arr.join('&');
-    return url + '?' + dataSrc;
+    dataSrc += `callback=${callbackName}`;
+    return `${url}?${dataSrc}`;
   };
   return new Promise((resolve, reject) => {
-    const ele = document.createElement('script');
-    ele.src = normalizeUrl();
-    document.body.appendChild(ele);
+    const scriptEle = document.createElement('script');
+    scriptEle.src = generateUrl();
+    document.body.appendChild(scriptEle);
     window[callbackName] = (data) => {
       resolve(data);
-      document.removeChild(ele);
+      document.removeChild(scriptEle);
     };
   });
 }

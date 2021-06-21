@@ -1,18 +1,15 @@
-function curry() {
-  const args = [...arguments];
-  function fn() {
-    if (arguments[0]) {
-      args.push(...arguments);
-      return fn;
-    }
-    return fn.sum();
+function curry(fn) {
+  const judge = (...args1) => {
+    if (args1.length === fn.length) return fn(...args1);
+    return (...args2) => judge(...args1, ...args2);
   }
-  fn.sum = function () {
-    return args.reduce((pre, cur) => pre + cur);
-  };
-  return fn;
+  return judge;
 }
 
-// test
-const sum = curry(1, 2, 3)(4)();
-console.log(sum);
+function add(a, b, c) {
+  return a + b + c;
+}
+
+console.log(add(1, 2, 3));
+let addCurry = curry(add);
+console.log(addCurry(1)(2)(3));

@@ -19,7 +19,7 @@ Singleton.getInstance = (function () {
   }
 })();
 
-// 测试代码
+// test
 let s1 = Singleton.getInstance();
 let s2 = Singleton.getInstance();
-console.log(s1 === s2);
+console.log(s1 === s2); // true

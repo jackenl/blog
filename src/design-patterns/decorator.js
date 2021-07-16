@@ -24,7 +24,7 @@ class Decorator {
   }
 }
 
-// 测试代码
+// test
 let cellphone = new Cellphone();
 cellphone.create();
 

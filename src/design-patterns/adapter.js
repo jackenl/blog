@@ -17,6 +17,6 @@ class Adapter {
   }
 }
 
-// 测试代码
+// test
 let adapter = new Adapter();
 console.log(adapter.getName());

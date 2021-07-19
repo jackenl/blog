@@ -53,6 +53,8 @@ IE 盒模型：属性width、heigtht指的是content+padding+border的宽度和�
   * 清除内部浮动
   * 自适应两栏布局
 
+> 除了 BFC 外，常见的格式化上下文类型有 IFC **行内格式化上下文**、FFC **自适应格式化上下文**以及 GFC **栅格格式化上下文**等。
+
 ## 清除浮动
 
 * 追加尾元素清除浮动
@@ -131,7 +133,7 @@ IE 盒模型：属性width、heigtht指的是content+padding+border的宽度和�
 
 * flex 容器属性
 
-  * `flex-direction`：排列主轴方向
+  * `flex-direction`：排列主轴方向
 
     ```css
     flex-diretion: row | row-reverse | column | column-reverse
@@ -361,7 +363,7 @@ transition 和 animation ，它们的主要区别是 transition 需要触发一�
 1. link是XHTML标签，除了加载CSS外，还可以定义RSS等其他事务；@import属于CSS范畴，只能加载CSS。
 2. link引用CSS时，在页面载入时同时加载；@import需要等页面加载完成后加载。
 3. link无兼容问题；@import是在CSS2.1提出的，低版本的浏览器不支持。
-4. Link 支持使用 js 动态引入，而@import不支持。
+4. link 支持使用 js 动态引入，而@import不支持。
 
 ## display: table 与 table 区别
 

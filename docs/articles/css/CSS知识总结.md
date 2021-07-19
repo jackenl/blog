@@ -354,18 +354,30 @@ IE 盒模型：属性width、heigtht指的是content+padding+border的宽度和�
 
   * `animationend`：在一个 CSS Animation 完成时触发（不包括完成前终止的情况）
 
-## tansition 与 animation 区别
+## tansition 与 animation 的区别
 
 transition 和 animation ，它们的主要区别是 transition 需要触发一个修改过度属性的事件才能产生过度效果，而 animation 不需要触发任何事件就可以产生动画效果，并且 transtion 只有开始和结束两个关键帧，而 animation 可以由多个关键帧组成。
 
-## link 与 @import 区别
+## px, em, rem 区别
+
+* **px** 是绝对单位，像素 px 是**相对显示器屏幕分辨率**而言的，是一个虚拟长度单位，是计算机系统的数字化图像长度单位，如果 px 要换算成物理长度，需要指定精度 DPI
+* **em** 是相对长度单位，**相对于当前元素内文本的字体尺寸**。如果
+当前对行内文本的字体尺寸未进行设置，则相对于浏览器默认的字体尺寸。它会继承父级元素的字体大小，因此并不是一个固定的值
+* **rem** 是 CSS3 新增的一个相对长度单位，与 em 不同的是，其**相对于 HTML 元素的字体尺寸**
+
+## nth-child 和 nth-of-type 的区别
+
+* `nth-child`选择的父元素的子元素，子元素并没有指定确切的类型
+* `nth-of-type`选择的是父元素内相同类型的子元素
+
+## link 与 @import 的区别
 
 1. link是XHTML标签，除了加载CSS外，还可以定义RSS等其他事务；@import属于CSS范畴，只能加载CSS。
 2. link引用CSS时，在页面载入时同时加载；@import需要等页面加载完成后加载。
 3. link无兼容问题；@import是在CSS2.1提出的，低版本的浏览器不支持。
 4. link 支持使用 js 动态引入，而@import不支持。
 
-## display: table 与 table 区别
+## display: table 与 table 的区别
 
 `display: table`和本身 table 是相对应的，区别在于`display: table`能够让一个 html 元素像 table 元素一样，使用基于表格的 css 布局，使我们能够轻松定义一个单元格的边界、背景等样式， 而不会产生因为使用 table 标签导致的语译化问题。
 

@@ -28,7 +28,7 @@ Module {
   filename: 'e:\\demo\\test\\index.js',
   loaded: false,
   children: [],
-  paths: 
+  paths:
    [ 'e:\\demo\\test\\node_modules',
      'e:\\demo\\node_modules',
      'e:\\node_modules' ]
@@ -57,7 +57,7 @@ Module.prototype.require = function (path) {
   assert(path, 'missing path');
   assert(typeof path === 'string', 'path must be a string');
   return Module._load(path, this, /* isMain */ false);
-}
+};
 ```
 
 `Module._load`函数
@@ -100,9 +100,8 @@ Module._load = function(request, parent, isMain) {
 `Module.prototype.load`函数
 
 ```js
-Module.prototype.load = function(filename) {
-  debug('load ' + JSON.stringify(filename) +
-        ' for module ' + JSON.stringify(this.id));
+Module.prototype.load = function (filename) {
+  debug('load ' + JSON.stringify(filename) + ' for module ' + JSON.stringify(this.id));
 
   assert(!this.loaded);
   this.filename = filename;
@@ -118,12 +117,12 @@ Module.prototype.load = function(filename) {
 `__filename`和`__dirname`生成
 
 ```js
-Module._extensions['.js'] = function(module, filename) {
+Module._extensions['.js'] = function (module, filename) {
   var content = fs.readFileSync(filename, 'utf8');
   module._compile(stripBOM(content), filename);
 };
 
-Module.prototype._compile = function(content, filename) {
+Module.prototype._compile = function (content, filename) {
   var self = this;
   var args = [self.exports, require, self, filename, dirname];
   // __filename 和 __dirname 参数注入
@@ -135,8 +134,8 @@ Module.prototype._compile = function(content, filename) {
 
 ```js
 (function (exports, require, module, __filename, __dirname) {
-	// 模块源码
-})()
+  // 模块源码
+})();
 ```
 
 实际上`exports`本质上就是`module.exports`的引用
@@ -170,7 +169,7 @@ Module.prototype._compile = function(content, filename) {
 
 1. timers：执行`setTimeout`、`setInterval`回调
 
-2. pending callbacks：执行I/O（文件、网络等）回调
+2. pending callbacks：执行 I/O（文件、网络等）回调
 
 3. idle, prepare：仅供系统内部调用
 
@@ -203,4 +202,3 @@ Buffer 并不是通过 V8 引擎进行内存分配的，其分配的内存属于
 ### Buffer 的内存分配机制
 
 为了高效的使用申请来的内存，Node 采用了 slab 分配机制。slab 是一种动态的内存管理机制。Node 以 8kb 为界限来来区分 Buffer 为大对象还是小对象，如果是小于 8kb 就是小 Buffer，大于 8kb 就是大 Buffer。例如第一次分配一个 1024 字节的 Buffer，`Buffer.alloc(1024)`,那么这次分配就会用到一个 slab，接着如果继续`Buffer.alloc(1024)`,那么上一次用的 slab 的空间还没有用完，因为总共是 8kb，1024+1024 = 2048 个字节，没有 8kb，所以就继续用这个 slab 给 Buffer 分配空间。如果超过 8kb，那么直接用 C++底层地宫的`SlowBuffer`来给 Buffer 对象提供空间。
-

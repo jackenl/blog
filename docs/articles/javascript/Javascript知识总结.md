@@ -1,14 +1,14 @@
 # Javascript 知识总结
 
-## JS的数据类型
+## 数据类型
 
 基本类型（primitives）：undefined, null, string, number, boolean, symbol(es6)；
 
 引用类型（objects）：Object(Array, Function, Date, Regx, ...)；
 
-## 隐式类型转换
+## 类型转换
 
-### ToPrimitive
+#### ToPrimitive
 
 在发生类型转换时，js会将操作对象转换成`primitive`类型，即原始对象。
 
@@ -25,9 +25,34 @@ ToPrimitive(input, PPreferredType?) //PreferredType: Number 或者 String
 
 > PS：在ES6中JS会优先调用[Symbol ToPrimitive]来转换为原始类型
 
+## 类型判断
 
+## 原型
 
+## 原型链
 
+## 执行上下文
 
+## 词法环境
 
+## 作用域
 
+## 作用域链
+
+## 闭包
+
+## new
+
+## instanceof
+
+## this
+
+## 对象拷贝
+
+## 模块化
+
+## 防抖与节流
+
+## 继承
+
+## ES6/ES7

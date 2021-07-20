@@ -2,30 +2,187 @@
 
 ## 数据类型
 
-基本类型（primitives）：undefined, null, string, number, boolean, symbol(es6)；
+- **基本类型**（primitives）：`undefined`, `null`, `string`, `number`, `boolean`, `symbol`
 
-引用类型（objects）：Object(Array, Function, Date, Regx, ...)；
+- **引用类型**（objects）：`Object`, `Array`, `Function`, `Date`, `RegExp`, ...
+
+在 ES10 中新增了第七种基本类型 `bigInt`，现 chrome 浏览器已支持
+
+### Symbol 类型
+
+`Symbol`类型是 ES6 中新增的一种基本数据类型，通过`Symbol()`返回的值都是唯一的。如果想要创建两个相等的`Symbol`变量，可以使用`Symbol.for(val)`
+
+**`Symbol`的应用场景**
+
+1. 私有属性
+
+```js
+const privateField = Symbol();
+class myClass {
+  constructor() {
+    this[privateField] = 'ConardLi';
+  }
+  getField() {
+    return this[privateField];
+  }
+  setField(val) {
+    this[privateField] = val;
+  }
+}
+```
+
+2. 防止属性污染
+
+```js
+Function.prototype.myCall = function (context) {
+  if (typeof this !== 'function') {
+    return undefined; // 用于防止 Function.prototype.myCall() 直接调用
+  }
+  context = context || window;
+  const fn = Symbol();
+  context[fn] = this;
+  const args = [...arguments].slice(1);
+  const result = context[fn](...args);
+  delete context[fn];
+  return result;
+};
+```
+
+3. 防止 XSS
+
+```js
+var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;
+```
+
+### Number 类型
+
+**IEEE 754**
+
+`ECMAScript`中的`Number`类型遵循`IEEE 754`标准。使用 64 位固定长度来表示。
+
+![](../../../images/数字二进制存储.png)
+
+`JavaScript`使用的是 64 位双精度浮点数编码，所以它的`符号位`占`1`位，指数位占`11`位，尾数位占`52`位
+
+**精度丢失**
+
+> 为何 0.1 + 0.2 !== 0.3 ？
+
+0.1 二进制表示为：`0.0001100110011001100...`
+
+使用科学计数法表示：`1.100110011001100...` X 2-4
+
+取 52 位尾数得到：
+
+`1.100110011001100110011001100110011001100110011001101`
+
+得到精度丢失的二进制值：
+
+`0.0001100110011001100110011001100110011001100110011001101`
+
+计算机使用精度丢失的二进制值进行运算，最终导致计算误差出现
 
 ## 类型转换
 
-#### ToPrimitive
+`Javascript`属于弱类型的语言，所以存在两种类型转换：**强制转换**和**隐式转换**
 
-在发生类型转换时，js会将操作对象转换成`primitive`类型，即原始对象。
+### 强制转换
 
-ToPrimitive(input, PPreferredType?) //PreferredType: Number 或者 String
+强制转换即通过调用基本类型的构造函数手动进行的数据类型转换，如`Number`, `String`等
 
-流程如下：
+### 隐式转换
 
-1. `input`为原始值（即基本类型），直接返回；
-2. 不是原始值，调用该对象的valueOf()方法，如果结果是原始值，返回原始值；
-3. 调用valueOf()结果不是原始值，调用此对象的toString()方法，如果结果是原始值，返回原始值；
-4. 如果返回的不是原始值，抛出异常TypeError。
+**引用类型转基本类型**
 
-其中`PPreferredType`控制是调用valueOf()还是toString()。
+从引用类型到基本类型的转换，会遵循`toPrimitive`原则，一般会调用引用类型的`valueOf`或`toString`方法，根据不同类型转换有不同的原则：
 
-> PS：在ES6中JS会优先调用[Symbol ToPrimitive]来转换为原始类型
+- 引用类型转换为`Number`类型，优先调用`valueOf`，再调用`toString`
+- 引用类型转换为`String`类型，优先调用 toString，再调用`valueOf`
+
+若`valueOf`和`toString`都不存在，或者没有返回基本类型，则抛出`TypeError`异常
+
+同时可以通过重写引用对象的`Symbol.toPrimitive`属性方法，实现自定义转换规则
+
+```js
+const obj = {
+  valueOf: () => {
+    console.log('valueOf');
+    return 123;
+  },
+  toString: () => {
+    console.log('toString');
+    return 'ConardLi';
+  },
+};
+console.log(obj - 1); // valueOf   122
+console.log(`${obj}ConardLi`); // toString  ConardLiConardLi
+
+const obj2 = {
+  [Symbol.toPrimitive]: () => {
+    console.log('toPrimitive');
+    return 123;
+  },
+};
+console.log(obj2 - 1); // toPrimitive   122
+
+const obj3 = {
+  valueOf: () => {
+    console.log('valueOf');
+    return {};
+  },
+  toString: () => {
+    console.log('toString');
+    return {};
+  },
+};
+console.log(obj3 - 1);
+// valueOf
+// toString
+// TypeError
+```
+
+**if 语句和逻辑语句**
+
+在`if`语句和逻辑语句中，会先将变量转换为`Boolean`值，然后再做判断，其中`nul`, `undefined`, `''`, `NaN`, `0`, `false`会转换成`false`，其他都转换成`true`
+
+**四则运算符**
+
+各种非`Number`类型运用数学运算符(`- * /`)时，会先将非`Number`类型转换为`Number`类型
+
+`+`运算符是例外：
+
+1.当一侧为`String`类型，被识别为字符串拼接，并会优先将另一侧转换为字符串类型
+
+2.当一侧为`Number`类型，另一侧为原始类型，则将原始类型转换为`Number`类型
+
+3.当一侧为`Number`类型，另一侧为引用类型，将引用类型和`Number`类型转换成字符串后拼接
+
+```js
+123 + '123'; // 123123   （规则1）
+123 + null; // 123    （规则2）
+123 + true; // 124    （规则2）
+123 + {}; // 123[object Object]    （规则3）
+```
+
+**== 运算符**
+
+![](../../../images/==操作符转换.png)
 
 ## 类型判断
+
+**typeof**
+
+`typeof`运算符用于判断一个变量的基本数据类型，除了函数外所有的引用类型都会被判定为`object`，另外由于语言设计问题`null`值判断返回的也是`object`
+
+**instanceof**
+
+**`instanceof`** 运算符用于检测构造函数的 `prototype` 属性是否出现在某个实例对象的原型链上
+
+因为可以修改构造函数的`prototye`属性，所以使用`instanceof`来检测数据类型并不会很准确，另外`instanceof`也不能检测基本数据类型
+
+**Object.prototype.toString.call()**
+
+默认情况下，调用`Object`对象的原型方法`toString`返回的是一个字符串`"[object type]"`，其中`type`表示的是当前变量的数据类型，通过`call`方法绑定到目标变量执行，可以得到我们想要的准确的数据类型
 
 ## 原型
 

@@ -2,11 +2,11 @@
 
 ## 数据类型
 
-- **基本类型**（primitives）：`undefined`, `null`, `string`, `number`, `boolean`, `symbol`
+- **原始类型**（primitives）：`undefined`, `null`, `string`, `number`, `boolean`, `symbol`
 
 - **引用类型**（objects）：`Object`, `Array`, `Function`, `Date`, `RegExp`, ...
 
-在 ES10 中新增了第七种基本类型 `bigInt`，现 chrome 浏览器已支持
+在 ES10 中新增了第七种原始类型 `bigInt`，现 chrome 浏览器已支持
 
 ### Symbol 类型
 
@@ -88,20 +88,17 @@ var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.f
 
 ### 强制转换
 
-强制转换即通过调用基本类型的构造函数手动进行的数据类型转换，如`Number`, `String`等
+强制转换即通过调用原始类型的构造函数手动进行的数据类型转换，如`Number`, `String`等
 
 ### 隐式转换
 
-**引用类型转基本类型**
+**对象转原始类型**
 
-从引用类型到基本类型的转换，会遵循`toPrimitive`原则，一般会调用引用类型的`valueOf`或`toString`方法，根据不同类型转换有不同的原则：
-
-- 引用类型转换为`Number`类型，优先调用`valueOf`，再调用`toString`
-- 引用类型转换为`String`类型，优先调用 toString，再调用`valueOf`
-
-若`valueOf`和`toString`都不存在，或者没有返回基本类型，则抛出`TypeError`异常
-
-同时可以通过重写引用对象的`Symbol.toPrimitive`属性方法，实现自定义转换规则
+从引用类型到原始类型的转换，会遵循`toPrimitive`原则，其转换逻辑如下：
+1. 如果存在`Symbol.toPrimitive`方法，优先调用再返回
+2. 调用`valueOf`方法，如果转换为原始类型，则返回
+3. 调用`toString`方法，如果抓换为原始类型，则返回
+4. 如果都没有返回原始类型，则抛出`TypeError`异常
 
 ```js
 const obj = {

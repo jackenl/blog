@@ -3,7 +3,7 @@ function shadowClone(source) {
 
   const result = Array.isArray(source) ? [] : {};
   for (let key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
+    if (source.hasOwnProperty(key)) {
       result[key] = source[key];
     }
   }
@@ -12,7 +12,8 @@ function shadowClone(source) {
 
 // test
 const obj = {
-  a: 1
-}
+  a: 1,
+  b: 2,
+};
 const newObj = shadowClone(obj);
 console.log(newObj);

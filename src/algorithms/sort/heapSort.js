@@ -1,4 +1,4 @@
-const swap = require("../../utils/swap");
+const swap = require('../../utils/swap');
 
 /**
  * 堆排序
@@ -13,9 +13,8 @@ function heapSort(arr) {
 
   // 堆排序：先将第一个元素和最后一个元素交换，再基于前n-1项进行堆化，重复以上操作
   for (var i = len - 1; i > 0; i--) {
-      swap(arr, 0, i);
-      len--;
-      heapify(arr, 0, len);
+    swap(arr, 0, i);
+    heapify(arr, 0, i);
   }
 
   return arr;
@@ -24,7 +23,7 @@ function heapSort(arr) {
 function heapify(arr, index, size) {
   var largest = index;
   var left = 2 * index + 1, right = 2 * index + 2;
-  
+
   if (left < size && arr[left] > arr[largest]) {
     largest = left;
   }
@@ -40,5 +39,5 @@ function heapify(arr, index, size) {
 }
 
 // 测试
-let arr = [3,44,38,5,47,15,36,26,27,2,46,4,19,50,48];
+let arr = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48];
 console.log(heapSort(arr));

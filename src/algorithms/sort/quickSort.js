@@ -1,4 +1,4 @@
-const swap = require("../../utils/swap");
+const swap = require('../../utils/swap');
 
 /**
  * 快速排序
@@ -30,5 +30,5 @@ function partition(arr, left, right) {
 }
 
 // 测试
-var arr = [3,44,38,5,47,15,36,26,27,2,46,4,19,50,48];
+var arr = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48];
 console.log(quickSort(arr, 0, arr.length - 1));

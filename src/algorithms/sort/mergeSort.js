@@ -13,28 +13,25 @@ function mergeSort(arr) {
   return merge(mergeSort(left), mergeSort(right));
 }
 
-function merge(left, right)
-{
-    var result = [];
-    var i = 0, j = 0;
+function merge(left, right) {
+  var result = [];
+  var i = 0, j = 0;
 
-    while (i < left.length && j < right.length) {
-        if (left[i] <= right[j]) {
-            result.push(left[i++]);
-        } else {
-            result.push(right[j++]);
-        }
+  while (i < left.length && j < right.length) {
+    if (left[i] <= right[j]) {
+      result.push(left[i++]);
+    } else {
+      result.push(right[j++]);
     }
+  }
 
-    while (i < left.length)
-        result.push(left[i++]);
+  while (i < left.length) result.push(left[i++]);
 
-    while (j < right.length)
-        result.push(right[j++]);
+  while (j < right.length) result.push(right[j++]);
 
-    return result;
+  return result;
 }
 
 // 测试
-var arr = [3,44,38,5,47,15,36,26,27,2,46,4,19,50,48];
+var arr = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48];
 console.log(mergeSort(arr));

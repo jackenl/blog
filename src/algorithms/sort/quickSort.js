@@ -1,4 +1,4 @@
-const swap = require('../../utils/swap');
+var swap = require('../../utils/swap');
 
 /**
  * 快速排序
@@ -29,6 +29,32 @@ function partition(arr, left, right) {
   return pivot;
 }
 
+function quickSort2(arr, low, high) {
+  if (low < high) {
+    var pivot = partition2(arr, low, high);
+    quickSort2(arr, low, pivot - 1);
+    quickSort2(arr, pivot + 1, high);
+  }
+  return arr;
+}
+
+function partition2(arr, low, high) {
+  var pivot = arr[low];
+  while (low < high) {
+    while (low < high && arr[high] > pivot) {
+      --high;
+    }
+    arr[low] = arr[high];
+    while (low < high && arr[low] <= pivot) {
+      ++low;
+    }
+    arr[high] = arr[low];
+  }
+  arr[low] = pivot;
+  return low;
+}
+
 // 测试
 var arr = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48];
 console.log(quickSort(arr, 0, arr.length - 1));
+console.log(quickSort2(arr, 0, arr.length - 1));
